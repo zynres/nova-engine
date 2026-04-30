@@ -1,0 +1,3 @@
+[submodule "Nova/Libraries/unsafe-maps"]
+	path = Nova/Libraries/unsafe-maps
+	url = https://github.com/Woolction/unsafe-maps.git
