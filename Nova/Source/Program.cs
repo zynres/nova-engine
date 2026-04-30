@@ -1,14 +1,15 @@
 ﻿using Silk.NET.OpenGL;
 using Silk.NET.GLFW;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace Nova
 {
-    unsafe class Program
+    public unsafe class Program
     {
         private static WindowHandle* window;
 
-        static void Main()
+        public static void Main(string[] args)
         {
             SetupDisplayBackend();
 
@@ -25,7 +26,7 @@ namespace Nova
             _ = AssetDirectories.Root;
 
             glfw.WindowHint(WindowHintInt.ContextVersionMajor, 3);
-            glfw.WindowHint(WindowHintInt.ContextVersionMajor, 3);
+            glfw.WindowHint(WindowHintInt.ContextVersionMinor, 3);
             glfw.WindowHint(WindowHintClientApi.ClientApi, ClientApi.OpenGL);
 
             window = glfw.CreateWindow(900, 700, "Nova Engine", null, null);
@@ -93,17 +94,6 @@ namespace Nova
                 rendering.Rendering(window);
             }
 
-            if (rendering.ObjectDatas.Length > 0)
-            {
-                for (int i = 0; i < rendering.ObjectDatas.Length; i++)
-                {
-                    ObjectData objectData = rendering.ObjectDatas[i];
-
-                    gl.DeleteBuffer(objectData.Renderer.vbo);
-                    gl.DeleteVertexArray(objectData.Renderer.vao);
-                }
-            }
-
             rendering.Dispose();
 
             glfw.DestroyWindow(window);
@@ -112,6 +102,12 @@ namespace Nova
 
         static void SetupDisplayBackend()
         {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Console.WriteLine("Running on Windows - no display setup needed");
+                return;
+            }
+            
             string waylandDisplay = Environment.GetEnvironmentVariable("WAYLAND_DISPLAY");
             string x11Display = Environment.GetEnvironmentVariable("DISPLAY");
 

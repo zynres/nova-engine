@@ -213,6 +213,9 @@ namespace Nova
             {
                 ObjectData objectData = ObjectDatas[i];
 
+                GContext._GL.DeleteBuffer(objectData.Renderer.vbo);
+                GContext._GL.DeleteVertexArray(objectData.Renderer.vao);
+
                 objectData.Dispose();
             }
 
