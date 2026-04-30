@@ -14,4 +14,8 @@
     <PackageReference Include="Silk.NET.Windowing" Version="2.22.0" />
     <PackageReference Include="StbImageSharp" Version="2.30.15" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="\Source\Libraries\unsafe-maps\unsafe-maps.csproj" />
+  </ItemGroup>
 </Project>
