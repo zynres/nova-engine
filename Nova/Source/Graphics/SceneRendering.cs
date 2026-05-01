@@ -130,10 +130,10 @@ namespace Nova
 
             for (int i = 0; i < ObjectDatas.Length; i++)
             {
-                ObjectData _object = ObjectDatas[i];
+                ObjectData* _object = ObjectDatas[i]; 
 
-                _object.Transform.Scale = new Vector3(0.5f, 0.5f, 0.5f);
-                _object.Transform.Position.Y = -5;
+                _object->Transform.Scale = new Vector3(0.5f, 0.5f, 0.5f);
+                _object->Transform.Position.Y = -5;
             }
 
             for (int i = 0; i < ObjectDatas.Length; i++)
@@ -163,47 +163,47 @@ namespace Nova
 
             for (int i = 0; i < ObjectDatas.Length; i++)
             {
-                ObjectData _object = ObjectDatas[i];
+                ObjectData* _object = ObjectDatas[i];
 
-                _object.Transform.Rotation.Y = time / 2;
+                _object->Transform.Rotation.Y = time / 2;
 
-                Matrix4x4 model = _object.Transform.LocalToWorldMatrix;
+                Matrix4x4 model = _object->Transform.LocalToWorldMatrix;
 
                 Matrix4x4 mvp = model * view * proj;
 
-                gl.UniformMatrix4(_object.Transform.ModelLoc, 1, false, &model.M11);
-                gl.UniformMatrix4(_object.Transform.MvpLoc, 1, false, &mvp.M11);
+                gl.UniformMatrix4(_object->Transform.ModelLoc, 1, false, &model.M11);
+                gl.UniformMatrix4(_object->Transform.MvpLoc, 1, false, &mvp.M11);
 
                 ShaderSetter.SetMatrix4("uMVP", mvp);
                 ShaderSetter.SetMatrix4("uModel", model);
 
-                gl.BindVertexArray(_object.Renderer.vao);
+                gl.BindVertexArray(_object->Renderer.vao);
 
                 if (ModeLineRender)
                 {
                     if (isBinding)
                     {
-                        _object.Renderer.material.BaseMap.UnBind(TextureUnit.Texture0);
-                        _object.Renderer.material.NormalMap.UnBind(TextureUnit.Texture1);
-                        _object.Renderer.material.MetallicMap.UnBind(TextureUnit.Texture2);
+                        _object->Renderer.material.BaseMap.UnBind(TextureUnit.Texture0);
+                        _object->Renderer.material.NormalMap.UnBind(TextureUnit.Texture1);
+                        _object->Renderer.material.MetallicMap.UnBind(TextureUnit.Texture2);
 
                         isBinding = false;
                     }
 
-                    gl.DrawElements(PrimitiveType.Lines, (uint)_object.Renderer.lineIndices.Length, DrawElementsType.UnsignedInt, (void*)0);
+                    gl.DrawElements(PrimitiveType.Lines, (uint)_object->Renderer.lineIndices.Length, DrawElementsType.UnsignedInt, (void*)0);
                 }
                 else
                 {
                     if (!isBinding)
                     {
-                        _object.Renderer.material.BaseMap.Bind(TextureUnit.Texture0);
-                        _object.Renderer.material.NormalMap.Bind(TextureUnit.Texture1);
-                        _object.Renderer.material.MetallicMap.Bind(TextureUnit.Texture2);
+                        _object->Renderer.material.BaseMap.Bind(TextureUnit.Texture0);
+                        _object->Renderer.material.NormalMap.Bind(TextureUnit.Texture1);
+                        _object->Renderer.material.MetallicMap.Bind(TextureUnit.Texture2);
 
                         isBinding = true;
                     }
 
-                    gl.DrawElements(PrimitiveType.Triangles, (uint)_object.Renderer.mesh.Indices.Length, DrawElementsType.UnsignedInt, (void*)0);
+                    gl.DrawElements(PrimitiveType.Triangles, (uint)_object->Renderer.mesh.Indices.Length, DrawElementsType.UnsignedInt, (void*)0);
                 }
             }
 
@@ -218,12 +218,12 @@ namespace Nova
         {
             for (int i = 0; i < ObjectDatas.Length; i++)
             {
-                ObjectData objectData = ObjectDatas[i];
+                ObjectData* objectData = ObjectDatas[i];
 
-                GContext._GL.DeleteBuffer(objectData.Renderer.vbo);
-                GContext._GL.DeleteVertexArray(objectData.Renderer.vao);
+                GContext._GL.DeleteBuffer(objectData->Renderer.vbo);
+                GContext._GL.DeleteVertexArray(objectData->Renderer.vao);
 
-                objectData.Dispose();
+                objectData->Dispose();
             }
 
             ObjectDatas.Dispose();

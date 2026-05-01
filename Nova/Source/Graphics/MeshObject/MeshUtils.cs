@@ -10,9 +10,9 @@ namespace Nova
 
             for (int i = 0; i < triangleIndices.Length; i += 3)
             {
-                uint a = triangleIndices[i];
-                uint b = triangleIndices[i + 1];
-                uint c = triangleIndices[i + 2];
+                uint a = *triangleIndices[i];
+                uint b = *triangleIndices[i + 1];
+                uint c = *triangleIndices[i + 2];
 
                 AddEdge(edges, a, b);
                 AddEdge(edges, b, c);
@@ -23,12 +23,12 @@ namespace Nova
 
             var indices = new UnsafeArray<uint>(values.Length);
 
-            for (int i = 0; i < indices.Length; i++)
+            for (int i = 0; i < values.Length; i++)
             {
-                uint index = indices[i];
-
-                index = values[i];
+                *indices[i] = values[i];
             }
+
+            indices.SetLength(values.Length);
 
             return indices;
         }

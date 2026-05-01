@@ -1,6 +1,7 @@
 using System.Globalization;
 using unsafe_maps.maps;
 using System.Numerics;
+using Silk.NET.OpenGL;
 
 namespace Nova
 {
@@ -69,9 +70,9 @@ namespace Nova
 
                         if (!vertexMap.TryGetValue(key, out uint index))
                         {
-                            var pos = positions[vIndex];
-                            var uv = (tIndex >= 0 && tIndex < uvs.Length) ? uvs[tIndex] : new Vector2();
-                            var norm = (nIndex >= 0 && nIndex < normals.Length) ? normals[nIndex] : new Vector3();
+                            var pos = *positions[vIndex];
+                            var uv = (tIndex >= 0 && tIndex < uvs.Length) ? *uvs[tIndex] : new Vector2();
+                            var norm = (nIndex >= 0 && nIndex < normals.Length) ? *normals[nIndex] : new Vector3();
 
                             using var values = new UnsafeArray<float>(11);
 
@@ -123,10 +124,10 @@ namespace Nova
                         var uv1 = vertexUVs[(int)i1];
                         var uv2 = vertexUVs[(int)i2];
 
-                        var deltaPos1 = v1 - v0;
-                        var deltaPos2 = v2 - v0;
-                        var deltaUV1 = uv1 - uv0;
-                        var deltaUV2 = uv2 - uv0;
+                        var deltaPos1 = *v1 - *v0;
+                        var deltaPos2 = *v2 - *v0;
+                        var deltaUV1 = *uv1 - *uv0;
+                        var deltaUV2 = *uv2 - *uv0;
 
                         float r = deltaUV1.X * deltaUV2.Y - deltaUV1.Y * deltaUV2.X;
 
@@ -137,20 +138,22 @@ namespace Nova
 
                         Vector3 tangent = (deltaPos1 * deltaUV2.Y - deltaPos2 * deltaUV1.Y) * r;
 
-                        tan1[(int)i0] += tangent;
-                        tan1[(int)i1] += tangent;
-                        tan1[(int)i2] += tangent;
+                        *tan1[(int)i0] += tangent;
+                        *tan1[(int)i1] += tangent;
+                        *tan1[(int)i2] += tangent;
                     }
                 }
             }
 
             for (int i = 0; i < tan1.Length; i++)
             {
-                Vector3 t = Vector3.Normalize(tan1[i]);
+                Vector3 t = Vector3.Normalize(*tan1[i]);
+
                 int baseIndex = i * 11 + 8;
-                finalVerts[baseIndex + 0] = t.X;
-                finalVerts[baseIndex + 1] = t.Y;
-                finalVerts[baseIndex + 2] = t.Z;
+
+                *finalVerts[baseIndex + 0] = t.X;
+                *finalVerts[baseIndex + 1] = t.Y;
+                *finalVerts[baseIndex + 2] = t.Z;
             }
 
             var mesh = new Mesh
@@ -178,9 +181,9 @@ namespace Nova
             {
                 int b = i * 8;
 
-                pos[i] = new Vector3(mesh.Vertices[b + 0], mesh.Vertices[b + 1], mesh.Vertices[b + 2]);
-                norm[i] = new Vector3(mesh.Vertices[b + 3], mesh.Vertices[b + 4], mesh.Vertices[b + 5]);
-                uv[i] = new Vector2(mesh.Vertices[b + 6], mesh.Vertices[b + 7]);
+                *pos[i] = new Vector3(*mesh.Vertices[b + 0], *mesh.Vertices[b + 1], *mesh.Vertices[b + 2]);
+                *norm[i] = new Vector3(*mesh.Vertices[b + 3], *mesh.Vertices[b + 4], *mesh.Vertices[b + 5]);
+                *uv[i] = new Vector2(*mesh.Vertices[b + 6], *mesh.Vertices[b + 7]);
             }
 
             for (int i = 0; i < mesh.Indices.Length; i += 3)
@@ -196,21 +199,21 @@ namespace Nova
                 var uv1 = uv[i1];
                 var uv2 = uv[i2];
 
-                var dp1 = p1 - p0;
-                var dp2 = p2 - p0;
-                var duv1 = uv1 - uv0;
-                var duv2 = uv2 - uv0;
+                var dp1 = *p1 - *p0;
+                var dp2 = *p2 - *p0;
+                var duv1 = *uv1 - *uv0;
+                var duv2 = *uv2 - *uv0;
 
                 float r = 1.0f / (duv1.X * duv2.Y - duv1.Y * duv2.X);
                 var tangent = (dp1 * duv2.Y - dp2 * duv1.Y) * r;
 
-                tan[i0] += tangent;
-                tan[i1] += tangent;
-                tan[i2] += tangent;
+                *tan[i0] += tangent;
+                *tan[i1] += tangent;
+                *tan[i2] += tangent;
             }
 
             for (int i = 0; i < vertexCount; i++)
-                tan[i] = Vector3.Normalize(tan[i]);
+                *tan[i] = Vector3.Normalize(*tan[i]);
 
             using var newVerts = new UnsafeList<float>(vertexCount * 11);
 
@@ -220,20 +223,20 @@ namespace Nova
 
                 using var value = new UnsafeArray<float>(11);
 
-                value.Data[0] = mesh.Vertices[b + 0]; // pos
-                value.Data[0] = mesh.Vertices[b + 1];
-                value.Data[0] = mesh.Vertices[b + 2];
+                value.Data[0] = *mesh.Vertices[b + 0]; // pos
+                value.Data[0] = *mesh.Vertices[b + 1];
+                value.Data[0] = *mesh.Vertices[b + 2];
 
-                value.Data[0] = mesh.Vertices[b + 3]; // normal
-                value.Data[0] = mesh.Vertices[b + 4];
-                value.Data[0] = mesh.Vertices[b + 5];
+                value.Data[0] = *mesh.Vertices[b + 3]; // normal
+                value.Data[0] = *mesh.Vertices[b + 4];
+                value.Data[0] = *mesh.Vertices[b + 5];
 
-                value.Data[0] = mesh.Vertices[b + 6]; // uv
-                value.Data[0] = mesh.Vertices[b + 7];
+                value.Data[0] = *mesh.Vertices[b + 6]; // uv
+                value.Data[0] = *mesh.Vertices[b + 7];
 
-                value.Data[0] = tan[i].X; // tangent
-                value.Data[0] = tan[i].Y;
-                value.Data[0] = tan[i].Z;
+                value.Data[0] = tan[i]->X; // tangent
+                value.Data[0] = tan[i]->Y;
+                value.Data[0] = tan[i]->Z;
 
                 newVerts.AddRange(value);
             }
