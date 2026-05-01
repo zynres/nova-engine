@@ -2,11 +2,17 @@ using unsafe_maps.maps;
 
 namespace Nova
 {
-    public struct Mesh
+    public struct Mesh : IDisposable
     {
         public UnsafeArray<float> Vertices;
         public UnsafeArray<uint> Indices;
         public readonly int VertexCount => Vertices.Length / 8;
+
+        public void Dispose()
+        {
+            Vertices.Dispose();
+            Indices.Dispose();
+        }
     }
 
     public readonly struct VertexKey : IEquatable<VertexKey>
@@ -32,5 +38,15 @@ namespace Nova
 
         public override int GetHashCode() =>
             HashCode.Combine(PosIndex, UVIndex, NormalIndex);
+
+        public static bool operator ==(VertexKey left, VertexKey right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(VertexKey left, VertexKey right)
+        {
+            return !(left == right);
+        }
     }
 }

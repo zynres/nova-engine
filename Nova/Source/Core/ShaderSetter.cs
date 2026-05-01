@@ -5,12 +5,11 @@ namespace Nova
 {
     public struct ShaderSetter : IDisposable
     {
-        private readonly GL gl;
         public uint Handle { get; private set; }
 
-        public ShaderSetter(GL glApi, Shader shader)
+        public ShaderSetter(Shader shader)
         {
-            gl = glApi;
+            GL gl = GContext._GL;
 
             uint vertex = gl.CreateShader(ShaderType.VertexShader);
             gl.ShaderSource(vertex, shader.vertexSrc);
@@ -34,42 +33,54 @@ namespace Nova
             gl.DeleteShader(fragment);
         }
 
-        public void Use() => gl.UseProgram(Handle);
+        public readonly void Use() => GContext._GL.UseProgram(Handle);
 
-        public void SetInt(string name, int value)
+        public readonly void SetInt(string name, int value)
         {
+            GL gl = GContext._GL;
+
             int loc = gl.GetUniformLocation(Handle, name);
             gl.Uniform1(loc, value);
         }
 
-        public void SetFloat(string name, float value)
+        public readonly void SetFloat(string name, float value)
         {
+            GL gl = GContext._GL;
+
             int loc = gl.GetUniformLocation(Handle, name);
             gl.Uniform1(loc, value);
         }
 
-        public void SetVector4(string name, Vector4 vec)
+        public readonly void SetVector4(string name, Vector4 vec)
         {
+            GL gl = GContext._GL;
+
             int loc = gl.GetUniformLocation(Handle, name);
             gl.Uniform4(loc, vec.X, vec.Y, vec.Z, vec.W);
         }
 
-        public void SetVector3(string name, Vector3 vec)
+        public readonly void SetVector3(string name, Vector3 vec)
         {
+            GL gl = GContext._GL;
+
             int loc = gl.GetUniformLocation(Handle, name);
             gl.Uniform3(loc, vec.X, vec.Y, vec.Z);
         }
 
-        public void SetMatrix4(string name, Matrix4x4 mat)
+        public readonly void SetMatrix4(string name, Matrix4x4 mat)
         {
+            GL gl = GContext._GL;
+
             int loc = gl.GetUniformLocation(Handle, name);
 
-            Span<float> matArray = stackalloc float[16];
-            matArray[0] = mat.M11; matArray[1] = mat.M12; matArray[2] = mat.M13; matArray[3] = mat.M14;
-            matArray[4] = mat.M21; matArray[5] = mat.M22; matArray[6] = mat.M23; matArray[7] = mat.M24;
-            matArray[8] = mat.M31; matArray[9] = mat.M32; matArray[10] = mat.M33; matArray[11] = mat.M34;
-            matArray[12] = mat.M41; matArray[13] = mat.M42; matArray[14] = mat.M43; matArray[15] = mat.M44;
-
+            Span<float> matArray = [
+                mat.M11, mat.M12, mat.M13,
+                mat.M14, mat.M21, mat.M22,
+                mat.M23, mat.M24, mat.M31,
+                mat.M32, mat.M33, mat.M34,
+                mat.M41, mat.M42, mat.M43,
+                mat.M44, ];
+                
             unsafe
             {
                 fixed (float* ptr = matArray)
@@ -79,8 +90,10 @@ namespace Nova
             }
         }
 
-        private void CheckCompileErrors(uint shader, string type)
+        private readonly void CheckCompileErrors(uint shader, string type)
         {
+            GL gl = GContext._GL;
+
             gl.GetShader(shader, ShaderParameterName.CompileStatus, out int status);
             if (status == 0)
             {
@@ -89,8 +102,10 @@ namespace Nova
             }
         }
 
-        private void CheckLinkErrors(uint program)
+        private readonly void CheckLinkErrors(uint program)
         {
+            GL gl = GContext._GL;
+
             gl.GetProgram(program, ProgramPropertyARB.LinkStatus, out int status);
             if (status == 0)
             {
@@ -101,6 +116,8 @@ namespace Nova
 
         public void Dispose()
         {
+            GL gl = GContext._GL;
+
             if (Handle != 0)
             {
                 gl.DeleteProgram(Handle);

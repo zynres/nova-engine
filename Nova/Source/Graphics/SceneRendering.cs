@@ -12,7 +12,7 @@ namespace Nova
 
         public void Dispose()
         {
-            Renderer.lineIndices.Dispose();
+            Renderer.Dispose();
         }
     }
 
@@ -31,7 +31,7 @@ namespace Nova
         {
             ModeLineRender = ModeLineRender = false;
 
-            Shader = new ShaderSetter(GContext._GL, new Shader());
+            Shader = new ShaderSetter(new Shader());
 
             ObjectDatas = new UnsafeList<ObjectData>(100);
 
