@@ -122,7 +122,7 @@ namespace Nova
         {
             CameraTransform = new()
             {
-                Position = new(0, 25, 30f),
+                Position = new(0, 30, 30f),
                 Rotation = new(7f, 0, 0)
             };
 
@@ -133,8 +133,12 @@ namespace Nova
             {
                 ObjectData* _object = ObjectDatas[i];
 
-                _object->Transform.Scale = new Vector3(0.5f, 0.5f, 0.5f);
-                _object->Transform.Position.Y = -5;
+                if (i == 0)
+                    _object->Transform.Scale = new Vector3(0.25f, 0.25f, 0.25f);
+                else
+                    _object->Transform.Scale = new Vector3(1f, 1f, 1f);
+
+                _object->Transform.Position.Y = 10 * i;
             }
         }
 
@@ -147,7 +151,7 @@ namespace Nova
                 return;
 
             gl.ClearColor(0.02f, 0.02f, 0.03f, 1.0f);
-            gl.Clear((uint)(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
+            gl.Clear((uint)(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));        
 
             float time = (float)glfw.GetTime();
 
@@ -222,6 +226,11 @@ namespace Nova
 
             ObjectDatas.Dispose();
             _ShaderSetter.Dispose();
+        }
+
+        internal void AddObject(string v, object mat1)
+        {
+            throw new NotImplementedException();
         }
     }
 }

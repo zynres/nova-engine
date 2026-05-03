@@ -18,5 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Libraries\unsafe-maps\unsafe-maps.csproj"/> 
+    <ProjectReference Include="..\Libraries\input\input.csproj"/> 
   </ItemGroup>
 </Project>

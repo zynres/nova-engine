@@ -2,6 +2,7 @@
 using Silk.NET.GLFW;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using input;
 
 namespace Nova
 {
@@ -54,6 +55,8 @@ namespace Nova
 
                 glfw.SetWindowOpacity(window, 0.9f);
 
+                Input.Init(window, glfw);
+
                 var _baseMap = new Texture2D(TexFormat.BaseMap, AssetDirectories.Textures + "/sakuya-Base_Color.png");
                 var _normalMap = new Texture2D(TexFormat.NormalMap, AssetDirectories.Textures + "/sakuya-Normal.png");
                 var _metallicMap = new Texture2D(TexFormat.MetallicMap, AssetDirectories.Textures + "/sakuya-Metallic.png");
@@ -70,13 +73,14 @@ namespace Nova
 
                 rendering.Init();
                 rendering.AddObject(AssetDirectories.Models + "/NewSakuya.obj", mat);
+                rendering.AddObject(AssetDirectories.Models + "/cube.obj", mat);
                 rendering.InitializeObject();
 
                 while (!glfw.WindowShouldClose(window))
                 {
                     glfw.PollEvents();
 
-                    if (InputAction.Press == (InputAction)glfw.GetKey(window, Keys.Number1))
+                    if (Input.GetKeyDown(Keys.Number1))
                     {
                         if (rendering.IsLineRender)
                         {
@@ -85,7 +89,7 @@ namespace Nova
                             Console.WriteLine($"[Render Mode] => Fill mode");
                         }
                     }
-                    else if (InputAction.Press == (InputAction)glfw.GetKey(window, Keys.Number2))
+                    else if (Input.GetKeyDown(Keys.Number2))
                     {
                         if (!rendering.IsLineRender)
                         {
