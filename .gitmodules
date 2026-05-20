@@ -1,6 +1,6 @@
-[submodule "Nova/Libraries/unsafe-maps"]
-	path = Nova/Libraries/unsafe-maps
+[submodule "libraries/unsafe-maps"]
+	path = libraries/unsafe-maps
 	url = https://github.com/Woolction/unsafe-maps.git
-[submodule "Nova/Libraries/input"]
-	path = Nova/Libraries/input
+[submodule "libraries/input"]
+	path = libraries/input
 	url = https://github.com/Woolction/input.git

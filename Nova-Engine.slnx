@@ -1,5 +1,5 @@
 <Solution> 
-	<Project Path="Nova\Source\Source.csproj"/>
-	<Project Path="Nova\Libraries\unsafe-maps\unsafe-maps.csproj"/>
-	<Project Path="Nova\Libraries\input\input.csproj"/>
+	<Project Path="src\Source.csproj" />
+	<Project Path="libraries/input/input.csproj" />
+	<Project Path="libraries/unsafe-maps/unsafe-maps.csproj" />
 </Solution>
